@@ -13,6 +13,8 @@ namespace SAPrepareFilesExtension.Helpers
     {
         public static void SendMessage(string title, string body, IEnumerable<string> filesPath)
         {
+            LogHelper.Begin(new { title, body, filesPath });
+
             var emailAddressFrom = string.IsNullOrWhiteSpace(GeneralSettings.Default.EmailAddressFrom) ? UserPrincipal.Current.EmailAddress : GeneralSettings.Default.EmailAddressFrom;
 
             MailMessage emailMessage = new MailMessage(
@@ -32,6 +34,8 @@ namespace SAPrepareFilesExtension.Helpers
             foreach (var filePath in filesPath)
                 emailMessage.Attachments.Add(new Attachment(filePath));
 
+            LogHelper.Trace(new { emailAddressFrom, GeneralSettings.Default.EmailAddressTo, emailMessage.Subject });
+
             // workaround for pass email with multiple attachments to the Outlook:
             SmtpClient client = new SmtpClient();
             client.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
@@ -40,10 +44,13 @@ namespace SAPrepareFilesExtension.Helpers
 
             var emailFilePath = FileHelper.GetEmailFilePath(filesPath.ElementAt(0));
 
+            LogHelper.Trace(new { SmtpDeliveryMethod.SpecifiedPickupDirectory, emailFilePath });
+
             Process.Start(emailFilePath);
 
             //Thread.Sleep(1000);
             //File.Delete(emailFilePath);
+            LogHelper.End();
         }
     }
 }

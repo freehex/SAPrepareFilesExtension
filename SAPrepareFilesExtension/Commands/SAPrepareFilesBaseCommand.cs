@@ -39,9 +39,13 @@ namespace SAPrepareFilesExtension
         {
             try
             {
+                LogHelper.Begin();
+
                 _pendingChanges = TeamExplorerHelper.GetIncludedChanges(_teamExplorer);
                 _workItems = TeamExplorerHelper.GetWorkItems(_teamExplorer);
                 _workspace = TeamExplorerHelper.GetWorkspace(_teamExplorer);
+
+                LogHelper.Trace(new { _pendingChanges, _workItems, _workspace });
 
                 var workingFolder = _workspace?.Folders?.FirstOrDefault(x => _pendingChanges.Any(pc => pc.ServerItem.IndexOf(x.ServerItem) >= 0));
                 var files = _pendingChanges.Select(x => new FileItem() {
@@ -57,7 +61,9 @@ namespace SAPrepareFilesExtension
                                             Title = x.WorkItem.Title,
                                             TypeName = x.WorkItem.Type?.Name
                                         });
-                
+
+                LogHelper.Trace(new { workingFolder, files, tasks });
+
                 if (files?.Count() > 0)
                 {
                     SettingsHelper.ProjectPath = workingFolder?.LocalItem;
@@ -67,6 +73,8 @@ namespace SAPrepareFilesExtension
 
                     var filesGroupText = SettingsHelper.GetFileItemsText(files, workingFolder?.ServerItem);
                     var tasksText = SettingsHelper.GetTaskItemsText(tasks);
+
+                    LogHelper.Trace(new { pathToBeSent, filesGroupText, tasksText });
 
                     if (ShowMessage("The archive containing changed files is prepared. Do you want to generate a letter?", OLEMSGBUTTON.OLEMSGBUTTON_YESNO) == 6)
                     {
@@ -80,7 +88,9 @@ namespace SAPrepareFilesExtension
                     {
                         if (GeneralSettings.Default.OpenResultSubFolderIfNotEmail && pathToBeSent?.Count() > 0)
                         {
-                            Process.Start("explorer.exe", Path.GetDirectoryName(pathToBeSent.ElementAt(0)));
+                            var sentFolderPath = Path.GetDirectoryName(pathToBeSent.ElementAt(0));
+                            LogHelper.Trace(new { sentFolderPath });
+                            Process.Start("explorer.exe", sentFolderPath);
                         }
                         if (GeneralSettings.Default.CopyMailBodyToClipboard)
                         {
@@ -92,9 +102,12 @@ namespace SAPrepareFilesExtension
                 {
                     ShowMessage("You don't have any modified files to check in. Please add changes and ensure that changed files are placed in the \"Included changes\" section.");
                 }
+
+                LogHelper.End();
             }
             catch (Exception ex)
             {
+                LogHelper.Fatal(ex);
                 ShowMessage($"Exception: {ex.Message}" + (GeneralSettings.Default.ShowStackTrace ? $"{Environment.NewLine}StackTrace: {ex.StackTrace}" : ""));
             }
         }

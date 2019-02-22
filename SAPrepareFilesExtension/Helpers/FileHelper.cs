@@ -12,6 +12,8 @@ namespace SAPrepareFilesExtension.Helpers
     {
         public static IEnumerable<string> CopyFilesToFolder(IEnumerable<FileItem> files)
         {
+            LogHelper.Begin(new { files });
+
             var result = new List<string>();
             var targetPath = Path.GetFullPath(
                             SettingsHelper.GetValue(GeneralSettings.Default.ResultFolderPath)
@@ -19,6 +21,8 @@ namespace SAPrepareFilesExtension.Helpers
                             + SettingsHelper.GetValue(GeneralSettings.Default.ResultSubFoldersName)
                             );
             var sqlFullScriptsPath = Path.GetFullPath(SettingsHelper.GetValue(GeneralSettings.Default.FullScriptsPath));
+
+            LogHelper.Trace(new { targetPath, sqlFullScriptsPath });
 
             Directory.CreateDirectory(targetPath); // create if not exists
             
@@ -28,6 +32,8 @@ namespace SAPrepareFilesExtension.Helpers
                 {
                     var destFilePath = Path.GetFullPath(file.LocalPath.Replace(SettingsHelper.ProjectPath, targetPath));
                     Directory.CreateDirectory(Path.GetDirectoryName(destFilePath));
+
+                    LogHelper.Trace(new { destFilePath, file.LocalPath });
 
                     if (!file.IsDirectory)
                     {
@@ -40,6 +46,8 @@ namespace SAPrepareFilesExtension.Helpers
                     var destFilePath = Path.GetFullPath(file.LocalPath.Replace(sqlFullScriptsPath, targetPath));
                     Directory.CreateDirectory(Path.GetDirectoryName(destFilePath));
 
+                    LogHelper.Trace("for SQL", new { destFilePath, file.LocalPath });
+
                     if (!file.IsDirectory)
                     {
                         File.Copy(file.LocalPath, destFilePath);
@@ -48,12 +56,14 @@ namespace SAPrepareFilesExtension.Helpers
             }
 
             var projectRootFolders = Directory.GetDirectories(targetPath, "*", SearchOption.TopDirectoryOnly);
-
+            
             foreach (var projDir in projectRootFolders)
             {
                 var resultZipPath = projDir
                                 + $"\\..\\{(projectRootFolders.Count() > 1 ? new DirectoryInfo(projDir).Name + "_" : "")}"
                                 + $"{SettingsHelper.GetValue(GeneralSettings.Default.DefaultZipName)}.zip";
+
+                LogHelper.Trace(new { projDir, resultZipPath });
 
                 ZipFile.CreateFromDirectory(
                     projDir,
@@ -66,6 +76,8 @@ namespace SAPrepareFilesExtension.Helpers
             }
 
             var sqlFilesPath = Directory.GetFiles(targetPath, "*.sql", SearchOption.TopDirectoryOnly);
+            LogHelper.Trace(new { sqlFilesPath });
+
             foreach (var sqlFilePath in sqlFilesPath)
             {
                 result.Add(sqlFilePath);
@@ -79,17 +91,31 @@ namespace SAPrepareFilesExtension.Helpers
                 }
             }
 
+            LogHelper.End(new { result });
+
             return result;
         }
 
         private static bool IsSqlPath(string rootPath, string path)
         {
-            return path.IndexOf(Path.GetFullPath($"{rootPath}\\{GeneralSettings.Default.SqlProjectName}\\")) >= 0;
+            LogHelper.Begin(new { rootPath, path });
+
+            var result = path.IndexOf(Path.GetFullPath($"{rootPath}\\{GeneralSettings.Default.SqlProjectName}\\")) >= 0;
+
+            LogHelper.End(new { result });
+
+            return result;
         }
 
         public static string GetEmailFilePath(string dirPath)
         {
-            return Directory.GetFiles(Path.GetDirectoryName(dirPath), "*.eml", SearchOption.TopDirectoryOnly).FirstOrDefault();
+            LogHelper.Begin(new { dirPath });
+
+            var result = Directory.GetFiles(Path.GetDirectoryName(dirPath), "*.eml", SearchOption.TopDirectoryOnly).FirstOrDefault();
+
+            LogHelper.End(new { result });
+
+            return result;
         }
     }
 }

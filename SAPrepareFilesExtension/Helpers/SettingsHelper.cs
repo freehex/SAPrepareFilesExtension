@@ -18,6 +18,8 @@ namespace SAPrepareFilesExtension.Helpers
         // slowly, but simple
         public static string GetValue(string parameter)
         {
+            LogHelper.Begin(new { parameter });
+
             var next = Regex.Replace(
                 parameter, 
                 "%date.*?%", 
@@ -29,6 +31,9 @@ namespace SAPrepareFilesExtension.Helpers
                 },
                 RegexOptions.IgnoreCase
             );
+
+            LogHelper.Trace("after %date% replaced", new { next });
+
             next = Regex.Replace(next, 
                 "%tasknums.*?%",
                 x => {
@@ -43,20 +48,29 @@ namespace SAPrepareFilesExtension.Helpers
                 },
                 RegexOptions.IgnoreCase
             );
+
+            LogHelper.Trace("after %tasknums% replaced", new { next });
+
             next = Regex.Replace(
                 next,
                 "%projectpath%",
                 ProjectPath,
                 RegexOptions.IgnoreCase
                 );
-            
+
+            LogHelper.End(new { next });
+
             return next;
         }
 
         public static string GetEmailBodyValue(IEnumerable<Tuple<string, IEnumerable<string>>> filesGroupText, IEnumerable<string> taskItemsText)
         {
+            LogHelper.Begin(new { filesGroupText, taskItemsText });
+
             var tasksText = string.Join(Environment.NewLine, taskItemsText);
             var next = string.Join(Environment.NewLine, GeneralSettings.Default.EmailBody.Cast<string>());
+
+            LogHelper.Trace(new { tasksText, next });
 
             next = Regex.Replace(
                 next,
@@ -64,6 +78,8 @@ namespace SAPrepareFilesExtension.Helpers
                 x => Regex.Replace(x.Value.Substring(1, x.Value.Length - 2), "%tickets%", tasksText, RegexOptions.IgnoreCase),
                 RegexOptions.IgnoreCase | RegexOptions.Singleline
             );
+
+            LogHelper.Trace("after %tickets% replaced", new { next });
 
             next = Regex.Replace( 
                 next,
@@ -74,11 +90,15 @@ namespace SAPrepareFilesExtension.Helpers
                     var sb = new StringBuilder();
                     var filledValue = GetValue(x.Value.Substring(1, x.Value.Length - 2));
 
+                    LogHelper.Trace(new { paramsMatch, filledValue });
+
                     if (!string.IsNullOrEmpty(paramsMatch.Value))
                     {
                         var filesParams = paramsMatch.Value.Substring(7, paramsMatch.Value.Length - 8);
                         var isIncluded = filesParams[0] != '!';
                         var parameters = filesParams.ToLower().Split(',').Select(p => p.TrimStart('!'));
+
+                        LogHelper.Trace("for specific projects", new { filesParams, isIncluded, parameters });
 
                         if (isIncluded)
                         {
@@ -111,25 +131,37 @@ namespace SAPrepareFilesExtension.Helpers
                 },
                 RegexOptions.IgnoreCase | RegexOptions.Singleline
             );
-            
+
+            LogHelper.End(new { next });
+
             return next;
         }
 
         public static string GetProjectValue(string parameter, string projectName)
         {
-            return Regex.Replace(
+            LogHelper.Begin(new { parameter, projectName });
+
+            var result = Regex.Replace(
                 parameter,
                 "%projectname%",
                 projectName,
                 RegexOptions.IgnoreCase
                 );
+
+            LogHelper.End(new { result });
+
+            return result;
         }
 
         public static IEnumerable<Tuple<string, IEnumerable<string>>> GetFileItemsText(IEnumerable<FileItem> files, string rootServerPath)
         {
+            LogHelper.Begin(new { files, rootServerPath });
+
             var fileItemTemplate = GetValue(GeneralSettings.Default.FileItem);
 
-            return files.Where(x => !x.IsDirectory && (!x.IsDelete || GeneralSettings.Default.IncludeDeletedFilesPathInEmailDescription))
+            LogHelper.Trace(new { fileItemTemplate });
+
+            var result = files.Where(x => !x.IsDirectory && (!x.IsDelete || GeneralSettings.Default.IncludeDeletedFilesPathInEmailDescription))
                         .GroupBy(x => GetProjectName(rootServerPath, x.ServerPath))
                         .Select(g =>
                                 {
@@ -139,6 +171,9 @@ namespace SAPrepareFilesExtension.Helpers
                                                                         .Substring(GeneralSettings.Default.FullScriptsPath.ToLower().IndexOf("sql\\") + 4)
                                                                         .Replace("\\", "/")
                                                                 : null;
+
+                                    LogHelper.Trace(new { isSql, sqlFullScriptsPath });
+
                                     return new Tuple<string, IEnumerable<string>>
                                     (
                                         g.Key,
@@ -150,17 +185,30 @@ namespace SAPrepareFilesExtension.Helpers
                                             if (!isSql)
                                             {
                                                 var next = Regex.Replace(fileItemTemplate, "%FilePath%", GetPathWithoutRootPart(rootServerPath, x.ServerPath, g.Key), RegexOptions.IgnoreCase);
-                                                return next = Regex.Replace(
+
+                                                LogHelper.Trace("after %FilePath% replaced", new { next });
+
+                                                next = Regex.Replace(
                                                                 next, 
                                                                 "%FileChangedType%", 
                                                                 v => x.IsAdd ? "[Added]" : (x.IsDelete ? "[Deleted]" : ""), 
                                                                 RegexOptions.IgnoreCase
                                                             );
+
+                                                LogHelper.Trace("after %FileChangedType% replaced", new { next });
+
+                                                return next;
                                             }
                                             else
                                             {
                                                 if (x.ServerPath.IndexOf(sqlFullScriptsPath) >= 0)
-                                                    return GetPathWithoutRootPart(sqlFullScriptsPath, x.ServerPath, g.Key);
+                                                {
+                                                    var sqlPath = GetPathWithoutRootPart(sqlFullScriptsPath, x.ServerPath, g.Key);
+
+                                                    LogHelper.Trace(new { sqlPath });
+
+                                                    return sqlPath;
+                                                }
                                                 return null;
                                             }
                                         })
@@ -168,33 +216,65 @@ namespace SAPrepareFilesExtension.Helpers
                                     );
                                 }
                         );
+
+            LogHelper.End(new { result });
+
+            return result;
         }
 
         public static IEnumerable<string> GetTaskItemsText(IEnumerable<TaskItem> tasks)
         {
+            LogHelper.Begin(new { tasks });
+
             var taskItemTemplate = GetValue(GeneralSettings.Default.TaskItem);
             
-            return tasks.OrderBy(x => x.Id)
+            var result = tasks.OrderBy(x => x.Id)
                         .Select(x => 
                         {
                             var next = Regex.Replace(taskItemTemplate, "%TaskId%", x.Id.ToString(), RegexOptions.IgnoreCase);
+
+                            LogHelper.Trace("after %TaskId% replaced", new { next });
+
                             next = Regex.Replace(next, "%TaskTitle%", x.Title, RegexOptions.IgnoreCase);
-                            return next = Regex.Replace(next, "%TaskType%", x.TypeName, RegexOptions.IgnoreCase);
+
+                            LogHelper.Trace("after %TaskTitle% replaced", new { next });
+
+                            next = Regex.Replace(next, "%TaskType%", x.TypeName, RegexOptions.IgnoreCase);
+
+                            LogHelper.Trace("after %TaskType% replaced", new { next });
+
+                            return next;
                         }
             );
+
+            LogHelper.End(new { result });
+
+            return result;
         }
 
         public static string GetPathWithoutRootPart(string rootPath, string itemPath, string projectName)
         {
-            return string.CompareOrdinal(projectName?.ToLower(), "sql") != 0 ?
+            LogHelper.Begin(new { rootPath, itemPath, projectName });
+
+            var result = string.CompareOrdinal(projectName?.ToLower(), "sql") != 0 ?
                             itemPath.Substring(rootPath.Length + projectName.Length + 2)
                             :
                             itemPath.Substring(itemPath.IndexOf(rootPath) + rootPath.Length + 1);
+
+            LogHelper.End(new { result });
+
+            return result;
         }
 
         public static string GetProjectName(string rootPath, string itemPath)
         {
-            return Regex.Match(itemPath.Substring(rootPath.Length + 1), ".*?[\\/]")?.Value?.TrimEnd(new char[] { '\\', '/' });
+            LogHelper.Begin(new { rootPath, itemPath });
+
+            var result = Regex.Match(itemPath.Substring(rootPath.Length + 1), ".*?[\\/]")?.Value?.TrimEnd(new char[] { '\\', '/' });
+
+            LogHelper.End(new { result });
+
+            return result;
         }
     }
 }
