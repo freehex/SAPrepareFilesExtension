@@ -39,11 +39,11 @@ namespace SAPrepareFilesExtension.Helpers
             SaveMessage("Trace", message, parameters, methodPath, methodName);
         }
 
-        public static void Fatal(Exception ex)
+        public static void Fatal(Exception ex, dynamic parameters = null, [CallerFilePath] string methodPath = "", [CallerMemberName] string methodName = "")
         {
             if (ex != null)
             {
-                Fatal($"Exception:\"{ex.Message}\" | StackTrace:\"{ex.StackTrace}\"");
+                Fatal($"Exception:\"{ex.Message}\" | StackTrace:\"{ex.StackTrace}\"", parameters, methodPath, methodName);
             }
         }
 
