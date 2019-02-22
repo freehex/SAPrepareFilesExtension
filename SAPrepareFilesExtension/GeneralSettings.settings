@@ -1,0 +1,73 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SAPrepareFilesExtension" GeneratedClassName="GeneralSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ResultFolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%ProjectPath%\..\ToProduction</Value>
+    </Setting>
+    <Setting Name="FullScriptsPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%ProjectPath%\SQL\_DeploymentScripts\OngoingChanges_FullScripts</Value>
+    </Setting>
+    <Setting Name="DefaultZipName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%Date%_[%TaskNums%]_fixes</Value>
+    </Setting>
+    <Setting Name="CopyMailBodyToClipboard" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ShowStackTrace" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ResultSubFoldersName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%Date:yyyyMMdd_HH-mm-ss%</Value>
+    </Setting>
+    <Setting Name="AddProjectFolderInZip" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DeleteTempFilesAfterArchiving" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="EmailBody" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;string&gt;Please deploy on Production&lt;/string&gt;
+  &lt;string /&gt;
+  &lt;string&gt;{Tickets:&lt;/string&gt;
+  &lt;string&gt;%Tickets%&lt;/string&gt;
+  &lt;string&gt;}&lt;/string&gt;
+  &lt;string&gt;{%ProjectName% Files:&lt;/string&gt;
+  &lt;string&gt;%Files:!SQL%&lt;/string&gt;
+  &lt;string&gt;}&lt;/string&gt;
+  &lt;string&gt;{SQL:&lt;/string&gt;
+  &lt;string&gt;%Files:SQL%&lt;/string&gt;
+  &lt;string&gt;}&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="EmailTitle" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%Date%_[%TaskNums%]_fixes</Value>
+    </Setting>
+    <Setting Name="EmailAddressTo" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="OpenResultSubFolderIfNotEmail" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="TaskItem" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%TaskId%    %TaskTitle%</Value>
+    </Setting>
+    <Setting Name="FileItem" Type="System.String" Scope="User">
+      <Value Profile="(Default)">./%FilePath% %FileChangedType%</Value>
+    </Setting>
+    <Setting Name="IncludeDeletedFilesPathInEmailDescription" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SqlProjectName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SQL</Value>
+    </Setting>
+    <Setting Name="EmailAddressFrom" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="EnableLogging" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
