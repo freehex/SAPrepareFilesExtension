@@ -75,7 +75,7 @@ namespace SAPrepareFilesExtension.Helpers
             next = Regex.Replace(
                 next,
                 "{.*?%tickets%.*?}",
-                x => Regex.Replace(x.Value.Substring(1, x.Value.Length - 2), "%tickets%", tasksText, RegexOptions.IgnoreCase),
+                x => Regex.Replace(x.Value.Substring(1, x.Value.Length - 2), "%tickets%", tasksText, RegexOptions.IgnoreCase), //without curly braces
                 RegexOptions.IgnoreCase | RegexOptions.Singleline
             );
 
@@ -88,13 +88,13 @@ namespace SAPrepareFilesExtension.Helpers
                 {
                     var paramsMatch = Regex.Match(x.Value, "%files:.*?%", RegexOptions.IgnoreCase);
                     var sb = new StringBuilder();
-                    var filledValue = GetValue(x.Value.Substring(1, x.Value.Length - 2));
+                    var filledValue = GetValue(x.Value.Substring(1, x.Value.Length - 2)); //without curly braces
 
                     LogHelper.Trace(new { paramsMatch, filledValue });
 
                     if (!string.IsNullOrEmpty(paramsMatch.Value))
                     {
-                        var filesParams = paramsMatch.Value.Substring(7, paramsMatch.Value.Length - 8);
+                        var filesParams = paramsMatch.Value.Substring(7, paramsMatch.Value.Length - 8); //without "%files:" and "%" parts
                         var isIncluded = filesParams[0] != '!';
                         var parameters = filesParams.ToLower().Split(',').Select(p => p.TrimStart('!'));
 
@@ -169,7 +169,7 @@ namespace SAPrepareFilesExtension.Helpers
                                     var isSql = string.CompareOrdinal(g.Key.ToLower(), sqlProjectName) == 0;
                                     var sqlFullScriptsPath = isSql ?
                                                                 GeneralSettings.Default.FullScriptsPath
-                                                                        .Substring(GeneralSettings.Default.FullScriptsPath.ToLower().IndexOf($"{sqlProjectName}\\") + 4)
+                                                                        .Substring(GeneralSettings.Default.FullScriptsPath.ToLower().IndexOf($"{sqlProjectName}\\") + sqlProjectName.Length + 1)
                                                                         .Replace("\\", "/")
                                                                 : null;
 
