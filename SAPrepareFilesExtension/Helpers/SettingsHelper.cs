@@ -165,11 +165,11 @@ namespace SAPrepareFilesExtension.Helpers
                         .GroupBy(x => GetProjectName(rootServerPath, x.ServerPath))
                         .Select(g =>
                                 {
-                                    var sqlProjectName = !string.IsNullOrEmpty(GeneralSettings.Default.SqlProjectName) ? GeneralSettings.Default.SqlProjectName.ToLower() : "sql";
-                                    var isSql = string.CompareOrdinal(g.Key.ToLower(), sqlProjectName) == 0;
+                                    var sqlProjectName = !string.IsNullOrEmpty(GeneralSettings.Default.SqlProjectName) ? GeneralSettings.Default.SqlProjectName : "sql";
+                                    var isSql = string.Compare(g.Key, sqlProjectName, StringComparison.OrdinalIgnoreCase) == 0;
                                     var sqlFullScriptsPath = isSql ?
                                                                 GeneralSettings.Default.FullScriptsPath
-                                                                        .Substring(GeneralSettings.Default.FullScriptsPath.ToLower().IndexOf($"{sqlProjectName}\\") + sqlProjectName.Length + 1)
+                                                                        .Substring(GeneralSettings.Default.FullScriptsPath.IndexOf($"{sqlProjectName}\\", StringComparison.OrdinalIgnoreCase) + sqlProjectName.Length + 1)
                                                                         .Replace("\\", "/")
                                                                 : null;
 
@@ -257,9 +257,9 @@ namespace SAPrepareFilesExtension.Helpers
         {
             LogHelper.Begin(new { rootPath, itemPath, projectName });
 
-            var sqlProjectName = !string.IsNullOrEmpty(GeneralSettings.Default.SqlProjectName) ? GeneralSettings.Default.SqlProjectName.ToLower() : "sql";
+            var sqlProjectName = !string.IsNullOrEmpty(GeneralSettings.Default.SqlProjectName) ? GeneralSettings.Default.SqlProjectName : "sql";
 
-            var result = string.CompareOrdinal(projectName?.ToLower(), sqlProjectName) != 0 ?
+            var result = string.Compare(projectName, sqlProjectName, StringComparison.OrdinalIgnoreCase) != 0 ?
                             itemPath.Substring(rootPath.Length + projectName.Length + 2)
                             :
                             itemPath.Substring(itemPath.IndexOf(rootPath) + rootPath.Length + 1);
