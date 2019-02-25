@@ -270,7 +270,7 @@ namespace SAPrepareFilesExtension.Helpers
         {
             LogHelper.Begin(new { rootPath, itemPath });
 
-            var result = Regex.Match(itemPath.Substring(rootPath.Length + 1), ".*?[\\/]")?.Value?.TrimEnd(new char[] { '\\', '/' });
+            var result = Regex.Match(itemPath.Substring(rootPath.Length), ".+?[\\/]")?.Value?.Trim(new char[] { '\\', '/' });
 
             LogHelper.End(new { result });
 
