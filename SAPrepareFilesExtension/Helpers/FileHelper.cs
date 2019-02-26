@@ -117,20 +117,5 @@ namespace SAPrepareFilesExtension.Helpers
 
             return result;
         }
-
-        public static string GetCertainFolderPath(string fullPath, string folderName)
-        {
-            var dir = new DirectoryInfo(fullPath);
-
-            if (dir?.Parent == null)
-                return null;
-
-            if (string.Compare(dir.Parent.Name, folderName, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                return dir.Parent.FullName;
-            }
-
-            return FileHelper.GetCertainFolderPath(dir.Parent.FullName, folderName);
-        }
     }
 }
