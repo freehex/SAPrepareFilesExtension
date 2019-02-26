@@ -121,6 +121,15 @@ namespace SAPrepareFilesExtension
             get { return GeneralSettings.Default.ResultSubFoldersName; }
             set { GeneralSettings.Default.ResultSubFoldersName = value; }
         }
+
+        [Category("Files")]
+        [DisplayName("Root folder name")]
+        [Description("Root folder name")]
+        public string RootFolderName
+        {
+            get { return GeneralSettings.Default.RootFolderName; }
+            set { GeneralSettings.Default.RootFolderName = value; }
+        }
         #endregion Files
 
         #region Email

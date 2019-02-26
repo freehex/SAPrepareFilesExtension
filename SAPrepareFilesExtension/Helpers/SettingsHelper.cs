@@ -282,7 +282,7 @@ namespace SAPrepareFilesExtension.Helpers
 
         public static RootFolder GetRootFolders(string serverRootPath, string localRootPath, IEnumerable<string> serverItems)
         {
-            LogHelper.Begin(new { serverRootPath, localRootPath });
+            LogHelper.Begin(new { serverRootPath, localRootPath, serverItems, GeneralSettings.Default.RootFolderName });
 
             RootFolder result = null;
 
