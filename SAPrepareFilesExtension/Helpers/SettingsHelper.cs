@@ -299,11 +299,12 @@ namespace SAPrepareFilesExtension.Helpers
                 else if (serverItems?.Count() > 0)
                 {
                     var serverItem = serverItems.First(x => x?.IndexOf(GeneralSettings.Default.RootFolderName, StringComparison.OrdinalIgnoreCase) >= 0);
+                    serverItem = serverItem.Substring(0, serverItem.IndexOf(GeneralSettings.Default.RootFolderName, StringComparison.OrdinalIgnoreCase) + GeneralSettings.Default.RootFolderName.Length);
 
                     result = new RootFolder()
                     {
-                        ServerItem = serverItem.Substring(0, serverItem.IndexOf(GeneralSettings.Default.RootFolderName, StringComparison.OrdinalIgnoreCase) + GeneralSettings.Default.RootFolderName.Length),
-                        LocalItem = serverRootPath.Replace(serverRootPath, localRootPath).Replace("/", "\\")
+                        ServerItem = serverItem,
+                        LocalItem = serverRootPath.Replace(serverItem, localRootPath).Replace("/", "\\")
                     };
                 }
             }
