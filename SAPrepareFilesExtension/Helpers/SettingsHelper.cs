@@ -304,7 +304,7 @@ namespace SAPrepareFilesExtension.Helpers
                     result = new RootFolder()
                     {
                         ServerItem = serverItem,
-                        LocalItem = serverItem.Replace(serverRootPath, localRootPath).Replace("/", "\\")
+                        LocalItem = serverItem.Replace(serverRootPath, localRootPath.TrimEnd('\\') + "\\").Replace("/", "\\")
                     };
                 }
             }
