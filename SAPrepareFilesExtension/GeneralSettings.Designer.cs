@@ -134,7 +134,6 @@ namespace SAPrepareFilesExtension {
   <string>{SQL:</string>
   <string>%Files:SQL%</string>
   <string>}</string>
-  <string>Cool weekend :)</string>
 </ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection EmailBody {
             get {
@@ -207,7 +206,7 @@ namespace SAPrepareFilesExtension {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool IncludeDeletedFilesPathInEmailDescription {
             get {
                 return ((bool)(this["IncludeDeletedFilesPathInEmailDescription"]));

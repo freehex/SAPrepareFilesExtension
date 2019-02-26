@@ -40,7 +40,6 @@
   &lt;string&gt;{SQL:&lt;/string&gt;
   &lt;string&gt;%Files:SQL%&lt;/string&gt;
   &lt;string&gt;}&lt;/string&gt;
-  &lt;string&gt;Cool weekend :)&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="EmailTitle" Type="System.String" Scope="User">
@@ -59,7 +58,7 @@
       <Value Profile="(Default)">./%FilePath% %FileChangedType%</Value>
     </Setting>
     <Setting Name="IncludeDeletedFilesPathInEmailDescription" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SqlProjectName" Type="System.String" Scope="User">
       <Value Profile="(Default)">SQL</Value>
