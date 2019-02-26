@@ -134,6 +134,7 @@ namespace SAPrepareFilesExtension {
   <string>{SQL:</string>
   <string>%Files:SQL%</string>
   <string>}</string>
+  <string>Cool weekend :)</string>
 </ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection EmailBody {
             get {

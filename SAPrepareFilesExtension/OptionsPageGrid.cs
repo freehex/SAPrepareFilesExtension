@@ -182,5 +182,16 @@ namespace SAPrepareFilesExtension
             set { GeneralSettings.Default.EmailAddressFrom = value; }
         }
         #endregion Email
+
+        public OptionsPageGrid()
+        {
+            GeneralSettings.Default.Save();
+            GeneralSettings.Default.PropertyChanged += GeneralSettings_PropertyChanged;
+        }
+
+        private void GeneralSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            GeneralSettings.Default.Save();
+        }
     }
 }

@@ -55,7 +55,7 @@ namespace SAPrepareFilesExtension
                     ShowMessage("Received workspace folders cannot be null");
                     return;
                 }
-
+                
                 var files = _pendingChanges.Select(x => new FileItem() {
                                             LocalPath = x.LocalOrServerItem.Replace(workingFolder.ServerItem, workingFolder?.LocalItem).Replace("/", "\\"),
                                             ServerPath = x.ServerItem,
