@@ -69,5 +69,8 @@
     <Setting Name="EnableLogging" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="RootFolderName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Development</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

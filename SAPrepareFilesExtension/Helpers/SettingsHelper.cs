@@ -279,5 +279,38 @@ namespace SAPrepareFilesExtension.Helpers
 
             return result;
         }
+
+        public static RootFolder GetRootFolders(string serverRootPath, string localRootPath, IEnumerable<string> serverItems)
+        {
+            LogHelper.Begin(new { serverRootPath, localRootPath });
+
+            RootFolder result = null;
+
+            if (!string.IsNullOrEmpty(serverRootPath) && !string.IsNullOrEmpty(localRootPath))
+            {
+                if (string.IsNullOrEmpty(GeneralSettings.Default.RootFolderName))
+                {
+                    result = new RootFolder()
+                    {
+                        ServerItem = serverRootPath,
+                        LocalItem = localRootPath
+                    };
+                }
+                else if (serverItems?.Count() > 0)
+                {
+                    var serverItem = serverItems.First(x => x?.IndexOf(GeneralSettings.Default.RootFolderName, StringComparison.OrdinalIgnoreCase) >= 0);
+
+                    result = new RootFolder()
+                    {
+                        ServerItem = serverItem.Substring(0, serverItem.IndexOf(GeneralSettings.Default.RootFolderName, StringComparison.OrdinalIgnoreCase) + GeneralSettings.Default.RootFolderName.Length),
+                        LocalItem = serverRootPath.Replace(serverRootPath, localRootPath).Replace("/", "\\")
+                    };
+                }
+            }
+
+            LogHelper.End(new { result });
+
+            return result;
+        }
     }
 }

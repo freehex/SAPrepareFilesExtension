@@ -45,9 +45,17 @@ namespace SAPrepareFilesExtension
                 _workItems = TeamExplorerHelper.GetWorkItems(_teamExplorer);
                 _workspace = TeamExplorerHelper.GetWorkspace(_teamExplorer);
 
-                LogHelper.Trace(new { _pendingChanges, _workItems, _workspace });
+                //LogHelper.Trace(new { _pendingChanges, _workItems, _workspace });
 
-                var workingFolder = _workspace?.Folders?.FirstOrDefault(x => _pendingChanges.Any(pc => pc.ServerItem.IndexOf(x.ServerItem) >= 0));
+                var workspaceFolder = _workspace?.Folders?.FirstOrDefault(x => _pendingChanges.Any(pc => pc.ServerItem.IndexOf(x.ServerItem) >= 0));
+                var workingFolder = SettingsHelper.GetRootFolders(workspaceFolder?.ServerItem, workspaceFolder?.LocalItem, _pendingChanges?.Select(x => x.ServerItem));
+
+                if (workingFolder == null)
+                {
+                    ShowMessage("Received workspace folders cannot be null");
+                    return;
+                }
+
                 var files = _pendingChanges.Select(x => new FileItem() {
                                             LocalPath = x.LocalOrServerItem.Replace(workingFolder.ServerItem, workingFolder?.LocalItem).Replace("/", "\\"),
                                             ServerPath = x.ServerItem,

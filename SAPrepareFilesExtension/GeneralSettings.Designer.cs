@@ -251,5 +251,17 @@ namespace SAPrepareFilesExtension {
                 this["EnableLogging"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Development")]
+        public string RootFolderName {
+            get {
+                return ((string)(this["RootFolderName"]));
+            }
+            set {
+                this["RootFolderName"] = value;
+            }
+        }
     }
 }

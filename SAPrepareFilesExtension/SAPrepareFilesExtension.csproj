@@ -73,6 +73,7 @@
     <Compile Include="Commands\SAPendingChangesCommand.cs" />
     <Compile Include="SAPrepareFilesPackage.cs" />
     <Compile Include="Models\TaskItem.cs" />
+    <Compile Include="Models\RootFolder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
