@@ -30,7 +30,7 @@ namespace SAPrepareFilesExtension.Helpers
             {
                 if (!IsSqlPath(SettingsHelper.ProjectPath, file.LocalPath))
                 {
-                    var destFilePath = Path.GetFullPath(file.LocalPath.Replace(SettingsHelper.ProjectPath, targetPath));
+                    var destFilePath = Path.GetFullPath(file.LocalPath.Replace(SettingsHelper.ProjectPath.TrimEnd('\\'), targetPath));
                     Directory.CreateDirectory(Path.GetDirectoryName(destFilePath));
 
                     LogHelper.Trace(new { destFilePath, file.LocalPath });
@@ -100,7 +100,7 @@ namespace SAPrepareFilesExtension.Helpers
         {
             LogHelper.Begin(new { rootPath, path });
 
-            var result = path.IndexOf(Path.GetFullPath($"{rootPath}\\{GeneralSettings.Default.SqlProjectName}\\")) >= 0;
+            var result = path.IndexOf(Path.GetFullPath($"{rootPath.TrimEnd('\\')}\\{GeneralSettings.Default.SqlProjectName.TrimEnd('\\')}\\")) >= 0;
 
             LogHelper.End(new { result });
 

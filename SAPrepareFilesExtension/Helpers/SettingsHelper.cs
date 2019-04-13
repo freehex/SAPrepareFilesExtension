@@ -54,7 +54,7 @@ namespace SAPrepareFilesExtension.Helpers
             next = Regex.Replace(
                 next,
                 "%projectpath%",
-                ProjectPath,
+                ProjectPath.TrimEnd('\\'),
                 RegexOptions.IgnoreCase
                 );
 
@@ -288,7 +288,7 @@ namespace SAPrepareFilesExtension.Helpers
 
             if (!string.IsNullOrEmpty(serverRootPath) && !string.IsNullOrEmpty(localRootPath))
             {
-                if (string.IsNullOrEmpty(GeneralSettings.Default.RootFolderName))
+                if (string.IsNullOrEmpty(GeneralSettings.Default.RootFolderName) || serverItems?.Count() < 1)
                 {
                     result = new RootFolder()
                     {
@@ -296,7 +296,7 @@ namespace SAPrepareFilesExtension.Helpers
                         LocalItem = localRootPath
                     };
                 }
-                else if (serverItems?.Count() > 0)
+                else
                 {
                     var serverItem = serverItems.First(x => x?.IndexOf(GeneralSettings.Default.RootFolderName, StringComparison.OrdinalIgnoreCase) >= 0);
                     serverItem = serverItem.Substring(0, serverItem.IndexOf(GeneralSettings.Default.RootFolderName, StringComparison.OrdinalIgnoreCase) + GeneralSettings.Default.RootFolderName.Length);
@@ -304,7 +304,7 @@ namespace SAPrepareFilesExtension.Helpers
                     result = new RootFolder()
                     {
                         ServerItem = serverItem,
-                        LocalItem = serverItem.Replace(serverRootPath, localRootPath.TrimEnd('\\') + "\\").Replace("/", "\\")
+                        LocalItem = serverItem.Replace(serverRootPath, localRootPath.TrimEnd('\\') + "\\").Replace("/", "\\").TrimEnd('\\')
                     };
                 }
             }
